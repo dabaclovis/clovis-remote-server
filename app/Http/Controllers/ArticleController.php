@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ArticleController extends Controller
 {
@@ -12,7 +13,12 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        return view('articles.index');
+        $articles = DB::table('articles')
+                    ->orderBy('created_at','desc')
+                    ->get();
+        return view('articles.index',[
+            'articles' => $articles,
+        ]);
     }
 
     /**
@@ -20,7 +26,7 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        //
+        return view('articles.create');
     }
 
     /**
@@ -28,7 +34,35 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request);
+        $this->validate($request,[
+            'title' => ['string','required','max:120'],
+            'body' => ['string','required','max:1500'],
+            'image' => ['max:1999','mimes:png,jpg,gif,jpg,']
+        ]);
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $name = $file->getClientOriginalName();
+
+            $diff = $name .'.'.time();
+
+            $path = $request->file('image')->storeAs('images',$diff, 'public');
+
+        }else {
+            $diff = 'noimage.jpg';
+        }
+
+        // Article::create([
+        //     'title' => $request->input('title'),
+        //     'body' => $request->input('body'),
+        //     'image' => $diff,
+
+        // ]);
+
+        $article = new Article();
+        $article->title = $request->input('title');
+        $article->body = $request->input('body');
+        $article->image = $diff;
+        return redirect()->route('pages.index');
     }
 
     /**
@@ -36,7 +70,10 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
-        //
+        $article = DB::table('articles')->find($article);
+        return view('articles.show', [
+            'article ' => $article,
+        ]);
     }
 
     /**

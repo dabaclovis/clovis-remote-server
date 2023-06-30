@@ -10,4 +10,17 @@ class PagesController extends Controller
     {
         return view('pages.index');
     }
+
+    public function resume()
+    {
+        return view('pages.resume');
+    }
+    public function about()
+    {
+        return view('pages.about');
+    }
+    public function policy()
+    {
+        return view('pages.policy');
+    }
 }

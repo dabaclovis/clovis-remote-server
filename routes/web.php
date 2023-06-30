@@ -17,6 +17,9 @@ use App\Http\Controllers\ArticleController;
 
 Route::controller(PagesController::class)->group(function(){
     Route::get('/','index')->name('pages.index');
+    Route::get('about','about')->name('pages.about');
+    Route::get('policy','policy')->name('pages.policy');
+    Route::get('resume','resume')->name('pages.resume');
 });
 
 
